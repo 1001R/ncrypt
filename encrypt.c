@@ -6,43 +6,6 @@
 #include <sodium.h>
 #include "util.h"
 
-#if 0
-static int
-readhexkey(const char *path, unsigned char key[32]) {
-  char buf[128], *p = buf;
-  size_t bufsz = sizeof(buf), klen;
-  int fd, n;
-
-  if (strcmp(path, "-") == 0) {
-    fd = STDIN_FILENO;
-  } else if ((fd = open(path, O_RDONLY)) == -1) {
-    return -1;
-  }
-
-  while (bufsz && (n = read(fd, p, bufsz)) > 0) {
-    bufsz -= n;
-    p += n;
-  }
-  if (fd != STDIN_FILENO) {
-    close(fd);
-  }
-  if (n == -1) {
-    return -1;
-    // err(EXIT_FAILURE, "cannot read public key");
-  }
-  if (n > 0) {
-    return -2;
-    // errx(EXIT_FAILURE, "invalid public key");
-  }
-  bufsz = sizeof(buf) - bufsz;
-  if (sodium_hex2bin(key, 32, buf, bufsz, ": \t\r\n", &klen, NULL) == -1 || klen != 32) {
-    return -2;
-    // errx(EXIT_FAILURE, "invalid public key");
-  }
-  return 0;
-}
-#endif
-
 void
 nc_encrypt(const char *pubkey) {
   unsigned char pk[crypto_box_PUBLICKEYBYTES];
@@ -113,53 +76,3 @@ c2:
 c0:
   exit(xc);
 }
-
-#if 0
-int encrypt_main(int argc, char **argv) {
-  const char *infile = NULL, *outfile = NULL, *pubkey = NULL;
-  int opt;
-
-  struct option options[] = {
-    {
-      .name = "key",
-      .has_arg = required_argument,
-      .flag = NULL,
-      .val = 'k'
-    },
-    {
-      .name = "input",
-      .has_arg = required_argument,
-      .flag = NULL,
-      .val = 'i'
-    },
-    {
-      .name = "output",
-      .has_arg = required_argument,
-      .flag = NULL,
-      .val = 'o'
-    },
-    {NULL}
-  };
-
-  while ((opt = getopt_long(argc, argv, "i:k:", options, NULL)) != -1) {
-    switch (opt) {
-    case 'i':
-      infile = optarg;
-      break;
-    case 'o':
-      outfile = optarg;
-      break;
-    case 'k':
-      pubkey = optarg;
-      break;
-    default:
-      return -1;
-    }
-  }
-  if (pubkey == NULL) {
-    return -1;
-  }
-  encrypt(pubkey, infile, outfile);
-  return 0;
-}
-#endif

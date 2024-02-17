@@ -1,0 +1,25 @@
+ncrypt -e PUBKEY  
+ 
+  Read data from stdin, encrypt it using PUBKEY, write result to stdout. If
+  stdin is a terminal, you will prompted to enter the secret to be
+  encrypted.
+  
+
+ncrypt -d [-K] KEY
+  
+  Read encrypted data from stdin, decrypt it, and write to stdout. With
+  option -K, KEY is expected to be a decimal integer representing a file
+  descriptor opened for reading, otherwise it should be the path to a file to
+  read the private key from.
+
+
+ncrypt -k
+
+  Generate a new keypair.
+
+
+ncrypt -p [-K] KEY
+  
+  Print public key for the private key KEY to stdout. See above for details on
+  how to pass the key)
+

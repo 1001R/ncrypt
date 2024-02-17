@@ -1,0 +1,7 @@
+foo=BAR
+answer=42
+key=ENC[c6NngotzKWn8+kaoD3peyJ5P9XRkLUQXZH00p1J2ESI0eW6e/VWrDiCnSw/aRDPX]
+another=one
+{
+    somelist = [ "ENC[c6NngotzKWn8+kaoD3peyJ5P9XRkLUQXZH00p1J2ESI0eW6e/VWrDiCnSw/aRDPX]", "ENC[c6NngotzKWn8+kaoD3peyJ5P9XRkLUQXZH00p1J2ESI0eW6e/VWrDiCnSw/aRDPX]" ],
+}

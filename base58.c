@@ -35,11 +35,10 @@ mult58(uint64_t w[8], int x) {
 
 
 int
-b58_encode(unsigned char key[32], char out[44]) {
+b58_encode(unsigned char key[32], char out[45]) {
     uint64_t words[8] = {0}, *w = NULL, r = 0;
     size_t i, wlen = 0;
     unsigned char *p = key;
-    char *o = out + 43;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 4; j++) {
             words[i] = (words[i] << 8) + *p++;
@@ -49,6 +48,12 @@ b58_encode(unsigned char key[32], char out[44]) {
             wlen = 8 - i;
         }
     }
+    if (!w) {
+        strcpy(out, "1");
+        return 0;
+    }
+    char *o = out + 44;
+    *o-- = '\0';
     for (i = 0; i < 44 && wlen > 0; i++) {
         r = div58(w, wlen);
         *o-- = ALPHABET[r];
@@ -57,8 +62,11 @@ b58_encode(unsigned char key[32], char out[44]) {
             w++;
         }
     }
-    for (; i < 44; i++) {
-        *o-- = ALPHABET[0];
+    if (wlen) {
+        return -1;
+    }
+    if (i < 44) {
+        memmove(out, out + 44 - i, i + 1);
     }
     return 0;
 }
@@ -88,30 +96,5 @@ b58_decode(const char *b58, unsigned char out[32]) {
         *o++ = (w >>  8) & 0xff;
         *o++ =  w        & 0xff;
     }
-}
-
-
-int main() {
-    unsigned char key[32] = {
-        // 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-        0x31, 0xdb, 0x7f, 0x4e, 0xb4, 0x98, 0xb9, 0xc5,
-        0x04, 0xa0, 0x51, 0xf5, 0xbe, 0xf3, 0x26, 0xc9, 
-        0x3d, 0x33, 0xcb, 0x03, 0x7d, 0xc5, 0xda, 0x62,
-        0xfc, 0x44, 0x06, 0x9f, 0x27, 0x35, 0x95, 0x7e, 
-    };
-    char buf[45];
-    buf[44] = 0;
-
-    for (int i = 0; i < 32; i++) {
-        printf("%02x", key[i]);
-    }
-    printf("\n");
-    b58_encode(key, buf);
-    printf("%.44s\n", buf);
-    b58_decode(buf, key);
-    for (int i = 0; i < 32; i++) {
-        printf("%02x", key[i]);
-    }
-    printf("\n");
     return 0;
 }

@@ -10,8 +10,9 @@ endif
 CFLAGS +=-Wno-unused-result
 
 objects = main.o encrypt.o decrypt.o util.o keypair.o
+tests = tests/t_*.c
 
-.PHONY: all clean
+.PHONY: all clean test
 
 all: ncrypt
 
@@ -25,3 +26,16 @@ main.o: main.c command.h decrypt.h encrypt.h keypair.h
 
 ncrypt: $(objects)
 	$(CC) -o $@ $^ $(LDFLAGS)
+
+# tests/%.o: CPPFLAGS += -I..
+
+tests/runtests.c: $(tests) tests/mktest.sh
+	tests/mktest.sh >$@
+
+tests/runtests: tests/runtests.o $(tests:.c=.o)
+	$(CC) -o $@ $^
+
+tests/t_base58.o: tests/t_base58.c base58.c
+
+test: tests/runtests
+	tests/runtests
